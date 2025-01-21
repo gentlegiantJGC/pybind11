@@ -79,6 +79,11 @@ class MyException5_1 : public MyException5 {
     using MyException5::MyException5;
 };
 
+class MyRuntimeError : public std::runtime_error {
+public:
+    using std::runtime_error::runtime_error;
+};
+
 // Exception that will be caught via the module local translator.
 class MyException6 : public std::exception {
 public:
@@ -191,6 +196,11 @@ TEST_SUBMODULE(exceptions, m) {
             throw MyException(e.what());
         }
     });
+	
+    py::register_exception<MyRuntimeError>(m, "MyRuntimeError", PyExc_RuntimeError);
+	
+    m.def("throw_my_runtime_error",
+           []() { throw MyRuntimeError("this error should be caught by MyRuntimeError and RuntimeError"); });
 
     // A simple exception translation:
     auto ex5 = py::register_exception<MyException5>(m, "MyException5");

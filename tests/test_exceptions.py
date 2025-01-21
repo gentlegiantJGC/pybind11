@@ -201,6 +201,13 @@ def test_custom(msg):
     assert msg(excinfo.value) == "[PythonMyException7]: abc"
 
 
+def test_custom_runtime_error():
+    with pytest.raises(RuntimeError) as excinfo:
+        m.throw_my_runtime_error()
+    with pytest.raises(m.MyRuntimeError) as excinfo:
+        m.throw_my_runtime_error()
+
+
 @pytest.mark.xfail("env.GRAALPY", reason="TODO should get fixed on GraalPy side")
 def test_nested_throws(capture):
     """Tests nested (e.g. C++ -> Python -> C++) exception handling"""
