@@ -1535,7 +1535,16 @@ template <typename T>
 class type_caster<T, enable_if_t<is_pyobject<T>::value>> : public pyobject_caster<T> {};
 
 template <>
-class type_caster<float_> : public pyobject_caster<float_> {};
+class type_caster<float_> : public pyobject_caster<float_> {
+public:
+    bool load(handle src, bool /* convert */) {
+        if (!isinstance<float_>(src)) {
+            return false;
+        }
+        value = reinterpret_borrow<float_>(src);
+        return true;
+    }
+};
 
 // Our conditions for enabling moving are quite restrictive:
 // At compile time:
