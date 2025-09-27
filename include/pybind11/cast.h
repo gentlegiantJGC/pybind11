@@ -1536,6 +1536,8 @@ class type_caster<T, enable_if_t<is_pyobject<T>::value>> : public pyobject_caste
 
 template <>
 struct type_caster<float_> {
+    type_caster() : value(reinterpret_steal<float_>(handle())) {}
+	
     bool load(handle src, bool /* convert */) {
         if (isinstance<float_>(src)) {
             value = reinterpret_borrow<float_>(src);
