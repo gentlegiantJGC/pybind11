@@ -65,6 +65,9 @@ def test_float(doc):
     f1 = m.float_roundtrip(5.5)
     assert isinstance(f1, float)
     assert f1 == 5.5
+    f2 = m.float_roundtrip(5)
+    assert isinstance(f2, float)
+    assert f2 == 5.0
 
 
 def test_list(capture, doc):
