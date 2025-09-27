@@ -1538,10 +1538,13 @@ template <>
 class type_caster<float_> : public pyobject_caster<float_> {
 public:
     bool load(handle src, bool /* convert */) {
-        if (!isinstance<float_>(src)) {
+        if (isinstance<float_>(src)) {
+            value = reinterpret_borrow<float_>(src);
+        } else if (isinstance<int_>(src)) {
+            value = float_(reinterpret_steal<int_>(src));
+        } else {
             return false;
         }
-        value = reinterpret_borrow<float_>(src);
         return true;
     }
 };
