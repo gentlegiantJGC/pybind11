@@ -62,6 +62,9 @@ def test_iterable(doc):
 def test_float(doc):
     assert doc(m.get_float) == "get_float() -> float"
     assert doc(m.float_roundtrip) == "float_roundtrip(arg0: float) -> float"
+    f0 = m.test_float_from_int(5)
+    assert isinstance(f0, float)
+    assert f0 == 5.0
     f1 = m.float_roundtrip(5.5)
     assert isinstance(f1, float)
     assert f1 == 5.5

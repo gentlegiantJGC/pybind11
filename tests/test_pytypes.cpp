@@ -209,6 +209,7 @@ TEST_SUBMODULE(pytypes, m) {
     m.def("get_tuple_from_iterable", [](const py::iterable &iter) { return py::tuple(iter); });
     // test_float
     m.def("get_float", [] { return py::float_(0.0f); });
+    m.def("test_float_from_int", [](py::int_ i){ return py::float(i); });
     m.def("float_roundtrip", [](py::float_ f) { return f; });
     // test_list
     m.def("list_no_args", []() { return py::list{}; });
