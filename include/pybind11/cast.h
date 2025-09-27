@@ -1536,8 +1536,6 @@ class type_caster<T, enable_if_t<is_pyobject<T>::value>> : public pyobject_caste
 
 template <>
 struct type_caster<float_> {
-    PYBIND11_TYPE_CASTER(float_, const_name("float"));
-
     bool load(handle src, bool /* convert */) {
         if (isinstance<float_>(src)) {
             value = reinterpret_borrow<float_>(src);
@@ -1552,6 +1550,8 @@ struct type_caster<float_> {
     static handle cast(const handle &src, return_value_policy /* policy */, handle /* parent */) {
         return src.inc_ref();
     }
+	
+	PYBIND11_TYPE_CASTER(float_, handle_type_name<float_>::name);
 };
 
 // Our conditions for enabling moving are quite restrictive:
