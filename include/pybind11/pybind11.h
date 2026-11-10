@@ -95,12 +95,14 @@ inline std::string generate_type_signature() {
 #endif
 
 #define PYBIND11_READABLE_FUNCTION_SIGNATURE_EXPR                                                 \
-    detail::const_name("(") + cast_in::arg_names + detail::const_name(") -> ") + cast_out::name
+    detail::const_name("(") + cast_in::arg_names + detail::const_name(") -> ")                    \
+        + detail::nullable_name<Return>(cast_out::name)
+
 
 // We factor out readable function signatures to a specific template
 // so that they don't get duplicated across different instantiations of
 // cpp_function::initialize (which is templated on more types).
-template <typename cast_in, typename cast_out>
+template <typename cast_in, typename cast_out, typename Return>
 class ReadableFunctionSignature {
 public:
     using sig_type = decltype(PYBIND11_READABLE_FUNCTION_SIGNATURE_EXPR);
@@ -127,13 +129,14 @@ public:
 // Prior to C++17, we don't have inline variables, so we have to
 // provide an out-of-line definition of the class member.
 #if !defined(__cpp_inline_variables) || __cpp_inline_variables < 201606L
-template <typename cast_in, typename cast_out>
-constexpr typename ReadableFunctionSignature<cast_in, cast_out>::sig_type
-    ReadableFunctionSignature<cast_in, cast_out>::kSig;
+template <typename cast_in, typename cast_out, typename Return>
+constexpr typename ReadableFunctionSignature<cast_in, cast_out, Return>::sig_type
+    ReadableFunctionSignature<cast_in, cast_out, Return>::kSig;
 #    if !defined(_MSC_VER)
-template <typename cast_in, typename cast_out>
-constexpr typename ReadableFunctionSignature<cast_in, cast_out>::types_type
-    ReadableFunctionSignature<cast_in, cast_out>::kTypes;
+template <typename cast_in, typename cast_out, typename Return>
+constexpr typename ReadableFunctionSignature<cast_in, cast_out, Return>::types_type
+    ReadableFunctionSignature<cast_in, cast_out, Return>::kTypes;
+
 #    endif
 #endif
 
@@ -490,10 +493,10 @@ protected:
         /* Generate a readable signature describing the function's arguments and return
            value types */
         static constexpr const auto &signature
-            = detail::ReadableFunctionSignature<cast_in, cast_out>::kSig;
+            = detail::ReadableFunctionSignature<cast_in, cast_out, Return>::kSig;
 #if !defined(_MSC_VER)
         static constexpr const auto &types
-            = detail::ReadableFunctionSignature<cast_in, cast_out>::kTypes;
+            = detail::ReadableFunctionSignature<cast_in, cast_out, Return>::kTypes;
 #else
         PYBIND11_DESCR_CONSTEXPR auto types = std::decay<decltype(signature)>::type::types();
 #endif
